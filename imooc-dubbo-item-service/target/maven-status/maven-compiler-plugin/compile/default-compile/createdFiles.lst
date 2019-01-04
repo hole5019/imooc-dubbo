@@ -1,0 +1,3 @@
+com\imooc\item\service\impl\ItemsServiceImpl.class
+com\imooc\item\starter\ItemApplication.class
+com\imooc\item\mapper\ItemsMapper.class

@@ -1,0 +1,6 @@
+com\imooc\common\enums\YesOrNo.class
+com\imooc\common\enums\OrderStatusEnum.class
+com\imooc\common\utils\IMoocJSONResult.class
+com\imooc\common\utils\JsonUtils.class
+com\imooc\common\pojo\JqGridResult.class
+com\imooc\common\enums\SexEnum.class
