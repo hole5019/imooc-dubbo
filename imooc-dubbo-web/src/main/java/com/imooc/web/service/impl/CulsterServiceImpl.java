@@ -1,5 +1,6 @@
 package com.imooc.web.service.impl;
 
+import com.imooc.curator.utils.DistributedLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class CulsterServiceImpl implements CulsterService {
 
 	@Autowired
 	private OrdersService ordersService;
+
+	@Autowired
+	private DistributedLock distributedLock;
 	
 	@Override
 	public void doBuyItem(String itemId) {
@@ -31,6 +35,9 @@ public class CulsterServiceImpl implements CulsterService {
 	
 	@Override
 	public boolean displayBuy(String itemId) {
+
+		// 执行订单流程之前使当前业务获得分布式锁
+		distributedLock.getLock();
 		
 		int buyCounts = 6;
 		
@@ -39,6 +46,8 @@ public class CulsterServiceImpl implements CulsterService {
 		if (stockCounts < buyCounts) {
 			log.info("库存剩余{}件，用户需求量{}件，库存不足，订单创建失败...", 
 					stockCounts, buyCounts);
+			//释放锁
+			distributedLock.releaseLock();
 			return false;
 		}
 		
@@ -58,9 +67,12 @@ public class CulsterServiceImpl implements CulsterService {
 			itemService.displayReduceCounts(itemId, buyCounts);
 		} else {
 			log.info("订单创建失败...");
+			//释放锁
+			distributedLock.releaseLock();
 			return false;
 		}
-		
+		//释放锁
+		distributedLock.releaseLock();
 		return true;
 	}
 	
